@@ -3,7 +3,7 @@
 using namespace std;
 #include <allegro5/allegro_audio.h>
 #include "Engine/IScene.hpp"
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 
 class ScoreboardScene final : public Engine::IScene {
 private:

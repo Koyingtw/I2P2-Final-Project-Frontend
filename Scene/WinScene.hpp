@@ -1,7 +1,9 @@
 #ifndef WINSCENE_HPP
 #define WINSCENE_HPP
 #include <allegro5/allegro_audio.h>
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
 #include "Engine/IScene.hpp"
 
 #include "Engine/AudioHelper.hpp"
