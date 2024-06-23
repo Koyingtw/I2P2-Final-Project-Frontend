@@ -22,7 +22,7 @@ protected:
     PlayScene* getPlayScene();
 public:
     std::vector<Cube*> Cubes;
-    char board[15][25];
+    char board[20][25];
     int score;
     char hold;
     Cube* cube_hold;
@@ -30,7 +30,7 @@ public:
     Cube* cube_next[4];
     char block;
     int block_dis;
-    char head_board[15][5];
+    char head_board[20][5];
     Player(int number);
     std::string cube_types;
     void Update(float deltaTime) override;

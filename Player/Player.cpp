@@ -35,25 +35,26 @@ PlayScene* Player::getPlayScene() {
 
 Player::Player(int number) :
 	Sprite("/square/none.png", 48763, 48763),player_number(number){
-        for(int i=0;i<10;i++){
-            for(int j=0;j<20;j++){
+        for(int i=0;i<20;i++){
+            for(int j=0;j<25;j++){
                 board[i][j] = 'X';
             }
         }
-        for(int i=0;i<4;i++){
-            for(int j=0;j<10;j++){
+        for(int i=0;i<20;i++){
+            for(int j=0;j<5;j++){
                 head_board[i][j] = 'X';
             }
         }
         cube_types = "IJLOSTZ";
-        hold = 'I';
-        next[0] = 'L';
-        next[1] = 'J';
-        next[2] = 'T';
-        next[3] = 'O';
+        hold = cube_types[rnd()%7];
+        next[0] = cube_types[rnd()%7];
+        next[1] = cube_types[rnd()%7];
+        next[2] = cube_types[rnd()%7];
+        next[3] = cube_types[rnd()%7];
         Cubes.clear();
-        block = 'S';
+        block = cube_types[rnd()%7];
         block_dis = 3;
+        score = 0;
         preview = new Cube(block, 48763, 48763);
 }
 
@@ -68,9 +69,10 @@ void Player::Clear_Cube(){
 void Player::Initialize(){
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-    int halfW = w / 2 ;
-    int halfH = h / 2 + 75;
     PlayScene* scene = getPlayScene();
+    int halfW = w / 2 + (scene->MapId==1?350*player_number:0);
+    int halfH = h / 2 + 75;
+    
     /*hold*/
 	scene -> CubeGroups -> AddNewObject(cube_hold = new Cube(hold, halfW-712 + 32 + 800 * (player_number - 1) , halfH-302 + 120));
 
@@ -83,9 +85,9 @@ void Player::Initialize(){
 void Player::Update(float deltaTime) {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-    int halfW = w / 2 ;
-    int halfH = h / 2 + 75;
     PlayScene* scene = getPlayScene();
+    int halfW = w / 2 + (scene->MapId==1?350*player_number:0);
+    int halfH = h / 2 + 75;
     Sprite::Update(deltaTime);
     Player::Eliminate();
     Player::Clear_Cube();
@@ -171,11 +173,12 @@ bool Player::Check_Row(int x,int y){
 }
 
 void Player::Move_Down(){
+    // std::cerr << 1111 << '\n';
     for(int j=-2;j<20;j++){
         int cnt = 0;
         for(int k=0;k<4;k++){
             for(int i=0;i<10;i++){
-                if(j+k>=0&&board[i][j+k]=='X' && head_board[i][k]!='X'&&Check_Row(i,j+k)){
+                if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'&&Check_Row(i,j+k)){
                     cnt++;
                 }
             }
@@ -183,7 +186,7 @@ void Player::Move_Down(){
         if(cnt==4){
             for(int k=0;k<4;k++){
                 for(int i=0;i<10;i++){
-                    if(j+k>=0&&board[i][j+k]=='X' && head_board[i][k]!='X'){
+                    if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'){
                         board[i][j+k] = head_board[i][k];
                     }
                 }
@@ -191,9 +194,11 @@ void Player::Move_Down(){
             preview->cube_type = next[0];
             for(int i=0;i<2;i++) next[i] = next[i+1];
             next[2] = cube_types[rnd()%7];
-            break;
+            return;
         }
     }
+    PlayScene* scene = getPlayScene();
+    scene->game_over = 1;
 }
 
 void Player::Eliminate() {

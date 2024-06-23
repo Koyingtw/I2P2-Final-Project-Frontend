@@ -47,6 +47,7 @@ public:
 	int MapId;
 	// int LibraryId;
 	int Player_Score;
+	bool game_over;
 	float ticks;
 	float deathCountDown;
 	// Map tiles.

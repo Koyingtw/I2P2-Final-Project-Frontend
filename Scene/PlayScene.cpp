@@ -53,6 +53,7 @@ void PlayScene::Initialize() {
 	money = 150;
 	SpeedMult = 1;
 	Player_Score = 0;
+	game_over = 0;
 	// ------------
 	player_1 = new Player(1);
 	player_2 = new Player(2);
@@ -97,15 +98,22 @@ void PlayScene::Update(float deltaTime) {
 	IScene::Update(deltaTime);
 	IScene::Draw();
 	player_1->Update(deltaTime);
-	player_2->Update(deltaTime);
 	Draw_game();
 	UpdateScore();
+	if(game_over){
+		Player_Score = player_1->score;
+		Engine::GameEngine::GetInstance().ChangeScene("win");
+	}
+	/*Local or not*/
+	if(MapId == 1) return;
+	player_2->Update(deltaTime);
+	
 }
 
 void PlayScene::Draw_game() {
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-    int halfW = w / 2 ;
+    int halfW = w / 2 + (MapId==1?350:0);
     int halfH = h / 2 + 75;
 	Clear_Square();
 	Square* square;
@@ -184,6 +192,8 @@ void PlayScene::Draw_game() {
 			}
 		}
 	}
+	/*Local or not*/
+	if(MapId == 1) return;
 	/*Player 2*/
 	for(int i=0;i<10;i++){
 		for(int j=0;j<20;j++){
@@ -264,19 +274,22 @@ void PlayScene::Draw_game() {
 void PlayScene::Draw() const {
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-    int halfW = w / 2 ;
+    int halfW = w / 2 + (MapId==1?350:0);
     int halfH = h / 2 + 75;
 	/*debug mode*/
 	if (DebugMode) {
 		Engine::Image E1 = Engine::Image("background/basic_help.png", halfW-312-400, halfH-302);
-		Engine::Image E2 = Engine::Image("background/basic_help.png", halfW-312+400, halfH-302);
-
 		Engine::Image E3 = Engine::Image("background/basic_head.png", halfW-312-400, halfH-430);
-		Engine::Image E4 = Engine::Image("background/basic_head.png", halfW-312+400, halfH-430);
-		E1.Draw();
-		E2.Draw();
 
+		E1.Draw();
 		E3.Draw();
+
+		/*Local or not*/
+		if(MapId == 1) return;
+
+		Engine::Image E2 = Engine::Image("background/basic_help.png", halfW-312+400, halfH-302);
+		Engine::Image E4 = Engine::Image("background/basic_head.png", halfW-312+400, halfH-430);
+		E2.Draw();
 		E4.Draw();
 
 	}
@@ -285,6 +298,8 @@ void PlayScene::Draw() const {
 
 void PlayScene::UpdateScore() {;
 	UIScore1->Text = std::string("Score ") + std::to_string(player_1->score);
+	/*Local or not*/
+	if(MapId == 1) return;
 	UIScore2->Text = std::string("Score ") + std::to_string(player_2->score);
 }
 
@@ -320,13 +335,16 @@ void PlayScene::Clear_Square() {
 void PlayScene::ConstructUI() {
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
     int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
-    int halfW = w / 2 ;
+    int halfW = w / 2 + (MapId==1?350:0);
     int halfH = h / 2 + 75;
 	UIGroup->AddNewObject(new Engine::Image("background/basic.png", halfW-312-400, halfH-302));
-	UIGroup->AddNewObject(new Engine::Image("background/basic.png", halfW-312+400, halfH-302));
 	UIGroup->AddNewObject(UIScore1 = new Engine::Label(std::string("Score ") + std::to_string(0), "pirulen.ttf", 24, halfW-312-400, halfH-350,255,255,255));
-	UIGroup->AddNewObject(UIScore2 = new Engine::Label(std::string("Score ") + std::to_string(0), "pirulen.ttf", 24, halfW-312+400, halfH-350,255,255,255));
+	
+	/*Local or not*/
+	if(MapId == 1) return;
 
+	UIGroup->AddNewObject(UIScore2 = new Engine::Label(std::string("Score ") + std::to_string(0), "pirulen.ttf", 24, halfW-312+400, halfH-350,255,255,255));
+	UIGroup->AddNewObject(new Engine::Image("background/basic.png", halfW-312+400, halfH-302));
 	// UIGroup->AddNewObject(new Engine::Image("square/blue.png", halfW-572+30, halfH+298-30));//(170,570)
 
 	// UIGroup->AddNewObject(new Engine::Image("square/red.png", halfW-572+30*2, halfH+298-30*2));

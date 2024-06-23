@@ -16,12 +16,35 @@
 [INFO] Created<sample_instance>: Resource/audios/select.ogg
 [INFO] Changed to stage-select scene
 [INFO] stopped audio (sample)
+[INFO] Loaded Resource<image>: Resource/images//square/none.png
+[INFO] Loaded Resource<image>: Resource/images/background/basic.png
 [INFO] Loaded Resource<font>: Resource/fonts/pirulen.ttf with size 24
-[INFO] Changed to scoreboard-scene scene
+[INFO] Loaded Resource<image>: Resource/images/play/target.png
+[INFO] Loaded Resource<audio>: Resource/audios/astronomia.ogg
+[INFO] Created<sample_instance>: Resource/audios/astronomia.ogg
+[INFO] Loaded Resource<image>: Resource/images/lose/benjamin-happy.png
+[INFO] Loaded Resource<audio>: Resource/audios/play.ogg
+[INFO] Changed to play scene
+[INFO] Loaded Resource<image>: Resource/images/square/orange.png
+[INFO] Loaded Resource<image>: Resource/images/square/yellow.png
+[INFO] Loaded Resource<image>: Resource/images/square/blue.png
+[INFO] Loaded Resource<image>: Resource/images/square/purple.png
+[INFO] Loaded Resource<image>: Resource/images/square/light_blue.png
+[INFO] Loaded Resource<image>: Resource/images/square/green.png
+[INFO] Loaded Resource<image>: Resource/images/square/red.png
+[INFO] stopped audio (bgm)
+[INFO] Loaded Resource<image>: Resource/images/win/benjamin-sad.png
+[INFO] Loaded Resource<image>: Resource/images/win/dirt.png scaled to 400x100
+[INFO] Loaded Resource<image>: Resource/images/win/dirt.png
+[INFO] Loaded Resource<image>: Resource/images/win/floor.png
+[INFO] Loaded Resource<audio>: Resource/audios/win.wav
+[INFO] Changed to win scene
+[INFO] stopped audio (bgm)
 [INFO] Created<sample_instance>: Resource/audios/select.ogg
 [INFO] Changed to stage-select scene
-[INFO] Game Terminating...
 [INFO] stopped audio (sample)
+[INFO] Changed to scoreboard-scene scene
+[INFO] Game Terminating...
 [INFO] Game terminated
 [INFO] Game end
 [INFO] Game Initializing...
