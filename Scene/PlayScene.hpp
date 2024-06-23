@@ -39,9 +39,10 @@ protected:
 public:
 	void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg);
 	std::thread ws_thread;
-	std::string uri = "ws://localhost:" + std::to_string(9029);
+	std::string uri = "ws://localhost:" + std::to_string(9031);
 	WebSocketClient ws_client;
 	std::mutex mtx;
+	bool waiting = false;
 
 
 	clock_t ct1,ct2;
@@ -56,7 +57,7 @@ public:
 	int MapId;
 	// int LibraryId;
 	int Player_Score;
-	bool game_over;
+	int game_over;
 	float ticks;
 	float deathCountDown;
 	// Map tiles.

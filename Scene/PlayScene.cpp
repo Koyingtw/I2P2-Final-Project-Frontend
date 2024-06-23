@@ -170,7 +170,10 @@ void PlayScene::on_message(websocketpp::connection_hdl hdl, client::message_ptr 
 			}
 		}
 		if (command == "game-over" || command == "you-win") {
-			game_over = 1;
+			game_over = 1 + (command == "you-win");
+		}
+		if (command == "Matched") {
+			waiting = false;
 		}
     }
 }
@@ -231,6 +234,10 @@ void PlayScene::Initialize() {
 	if (MapId == 2) { // send PVE to server
 		ws_client.send_message("pve");
 	}
+	else if (MapId == 3) { // send PVP to server
+		waiting = true;
+		ws_client.send_message("pvp");
+	}
 }
 
 void PlayScene::Terminate() {
@@ -248,7 +255,10 @@ void PlayScene::Update(float deltaTime) {
 	UpdateScore();
 	if(game_over){
 		Player_Score = player_1->score;
-		Engine::GameEngine::GetInstance().ChangeScene("win");
+		if (game_over == 1)
+			Engine::GameEngine::GetInstance().ChangeScene("lose");
+		else
+			Engine::GameEngine::GetInstance().ChangeScene("win");
 	}
 	/*Local or not*/
 	if(MapId == 1) return;
@@ -439,6 +449,11 @@ void PlayScene::Draw() const {
 		E4.Draw();
 
 	}
+
+	if (waiting) {
+		Engine::Image W = Engine::Image("background/waiting.png", 0, 0);
+		W.Draw();
+	}
 	
 }
 
@@ -467,7 +482,7 @@ void PlayScene::OnKeyDown(int keyCode) {
 		if (MapId == 1)
 			player_1->Move_Down();	
 		else {
-			std::string str = "3";
+			std::string str = (MapId == 2 ? "3" : "1");
 			for (int j = 3; ~j; j--) {
 				for (int i = 0; i < 10; i++) {
 					str += player_1->head_board[i][j];
@@ -482,7 +497,7 @@ void PlayScene::OnKeyDown(int keyCode) {
 		if (MapId == 1)
 			player_1->Hold_Change();
 		else {
-			ws_client.send_message("4");
+			ws_client.send_message((MapId == 2 ? "4": "2"));
 		}
 	}
 }
