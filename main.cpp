@@ -10,6 +10,10 @@
 #include "Scene/StartScene.h"
 #include "Scene/SettingsScene.hpp"
 #include "Scene/ScoreboardScene.hpp"
+#include <websocketpp/config/asio_no_tls_client.hpp>
+#include <websocketpp/client.hpp>
+#include "Websocket/client.hpp"
+#include <string>
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true);

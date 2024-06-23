@@ -8,6 +8,7 @@
 #include <string>
 #include <memory>
 #include <iostream>
+#include <sstream>
 
 #include "Engine/AudioHelper.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
@@ -42,6 +43,136 @@ const std::vector<int> PlayScene::code = { ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEG
 									ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER };
 Engine::Point PlayScene::GetClientSize() {
 	return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
+}
+
+void PlayScene::on_message(websocketpp::connection_hdl hdl, client::message_ptr msg) {
+    std::string message = msg->get_payload();
+    std::cout << "Received message in new function: " << message << std::endl;
+
+    // 解析訊息
+
+    std::stringstream ss(message);
+    std::string command;
+    while (ss >> command) {
+		std::cout << "command: " << command << std::endl;
+        if (command == "my-block") {
+			char ret;
+			std::cout << command << std::endl;
+            std::vector<std::vector<char>> block;
+			for (int i = 0; i < 4; i++) {
+				std::vector<char> row;
+				for (int j = 0; j < 10; j++) {
+					char c;
+					ss >> c;
+					row.push_back(c);
+					if (c != 'X')
+						ret = c;
+				}
+				block.push_back(row);
+			}
+
+			std::lock_guard<std::mutex> lock(mtx);
+			player_1->preview->cube_type = ret;
+        }
+		if (command == "my-board") {
+			std::vector<std::vector<char>> recv_board;
+			for (int i = 0; i < 20; i++) {
+				std::vector<char> row;
+				for (int j = 0; j < 10; j++) {
+					char c;
+					ss >> c;
+					row.push_back(c);
+				}
+				recv_board.push_back(row);
+			}
+
+			for (int i = 0; i < 20; i++) {
+				for (int j = 0; j < 10; j++) {
+					std::lock_guard<std::mutex> lock(mtx);
+					player_1->board[j][20 - i - 1] = recv_board[i][j];
+				}
+			}
+		}
+		if (command == "my-hold") {
+			char ret;
+			ss >> ret;
+            
+			std::lock_guard<std::mutex> lock(mtx);
+			player_1->hold = ret;
+        }
+		if (command == "my-next") {
+			for (int i = 0; i < 3; i++) {
+				char ret;
+				ss >> ret;
+				std::lock_guard<std::mutex> lock(mtx);
+				player_1->next[i] = ret;
+			}
+		}
+		if (command == "my-score") {
+			int ret;
+			ss >> ret;
+			// std::lock_guard<std::mutex> lock(mtx);
+			player_1->score = ret;
+		}
+		if (command == "enemy-score" || command == "ai-score") {
+			int ret;
+			ss >> ret;
+			// std::lock_guard<std::mutex> lock(mtx);
+			player_2->score = ret;
+		}
+		if (command == "enemy-block" || command == "ai-block") {
+			std::vector<std::vector<char>> recv_block;
+			for (int i = 0; i < 4; i++) {
+				std::vector<char> row;
+				for (int j = 0; j < 10; j++) {
+					char c;
+					ss >> c;
+					row.push_back(c);
+				}
+				recv_block.push_back(row);
+			}
+			for (int i = 0; i < 4; i++) {
+				for (int j = 0; j < 10; j++) {
+					player_2->head_board[j][4 - i - 1] = recv_block[i][j];
+				}
+			}
+		}
+		if (command == "enemy-board" || command == "ai-board") {
+			std::vector<std::vector<char>> recv_board;
+			for (int i = 0; i < 20; i++) {
+				std::vector<char> row;
+				for (int j = 0; j < 10; j++) {
+					char c;
+					ss >> c;
+					row.push_back(c);
+				}
+				recv_board.push_back(row);
+			}
+			for (int i = 0; i < 20; i++) {
+				for (int j = 0; j < 10; j++) {
+					std::lock_guard<std::mutex> lock(mtx);
+					player_2->board[j][20 - i - 1] = recv_board[i][j];
+				}
+			}
+		}
+		if (command == "enemy-hold" || command == "ai-hold") {
+			char ret;
+			ss >> ret;
+			std::lock_guard<std::mutex> lock(mtx);
+			player_2->hold = ret;
+		}
+		if (command == "enemy-next" || command == "ai-next") {
+			for (int i = 0; i < 3; i++) {
+				char ret;
+				ss >> ret;
+				std::lock_guard<std::mutex> lock(mtx);
+				player_2->next[i] = ret;
+			}
+		}
+		if (command == "game-over" || command == "you-win") {
+			game_over = 1;
+		}
+    }
 }
 
 void PlayScene::Initialize() {
@@ -86,6 +217,20 @@ void PlayScene::Initialize() {
 	// Start BGM.
 	bgmId = AudioHelper::PlayBGM("play.ogg");
 	ct1 = clock();
+
+	ws_client.m_client.set_message_handler(std::bind(&PlayScene::on_message, this, std::placeholders::_1, std::placeholders::_2));
+	ws_thread = std::thread([this]() {
+        ws_client.run(uri);
+    });
+	
+	while (ws_client.running == false) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+	if (MapId == 2) { // send PVE to server
+		ws_client.send_message("pve");
+	}
 }
 
 void PlayScene::Terminate() {
@@ -318,11 +463,27 @@ void PlayScene::OnKeyDown(int keyCode) {
 	else if(keyCode == ALLEGRO_KEY_X){
 		player_1->Rotate();
 	}
-	else if(keyCode == ALLEGRO_KEY_S){
-		player_1->Move_Down();
+	else if(keyCode == ALLEGRO_KEY_S || keyCode == ALLEGRO_KEY_SPACE){
+		if (MapId == 1)
+			player_1->Move_Down();	
+		else {
+			std::string str = "3";
+			for (int j = 3; ~j; j--) {
+				for (int i = 0; i < 10; i++) {
+					str += player_1->head_board[i][j];
+					// str += "1";
+				}
+			}
+			std::cout << str << std::endl;
+			ws_client.send_message(str);
+		}
 	}
 	else if(keyCode == ALLEGRO_KEY_C){
-		player_1->Hold_Change();
+		if (MapId == 1)
+			player_1->Hold_Change();
+		else {
+			ws_client.send_message("4");
+		}
 	}
 }
 

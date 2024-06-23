@@ -4,8 +4,15 @@ project(2024_I2P2_TowerDefense_with_answer)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
 
+set(CMAKE_OSX_ARCHITECTURES "arm64")
+
 include_directories(.)
 include_directories(Resource)
+include_directories(/opt/homebrew/Cellar/websocketpp/0.8.2/include)
+include_directories(/opt/homebrew/Cellar/boost/1.85.0/include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+find_package(Boost REQUIRED system thread)
 
 file(COPY Resource/audios DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY Resource/fonts DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -114,6 +121,9 @@ add_executable(2024_I2P2_TowerDefense_with_answer
 
         Player/Player.cpp
         Player/Player.hpp
+
+        Websocket/client.cpp
+        Websocket/client.hpp
 )
 
 IF (WIN32)
@@ -128,5 +138,7 @@ ELSE()
     target_include_directories(2024_I2P2_TowerDefense_with_answer PUBLIC ${ALLEGRO5_INCLUDE_DIRS})
     target_compile_options(2024_I2P2_TowerDefense_with_answer PUBLIC ${ALLEGRO5_CFLAGS_OTHER})
     target_link_libraries(2024_I2P2_TowerDefense_with_answer ${ALLEGRO5_LIBRARIES})
+    target_link_libraries(2024_I2P2_TowerDefense_with_answer Boost::system Boost::thread pthread)
     target_link_directories(2024_I2P2_TowerDefense_with_answer PUBLIC ${ALLEGRO5_LIBRARY_DIRS})
+    set(CMAKE_OSX_ARCHITECTURES "arm64")
 ENDIF()

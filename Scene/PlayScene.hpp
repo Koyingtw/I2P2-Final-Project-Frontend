@@ -6,9 +6,11 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <mutex>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
+#include "Websocket/client.hpp"
 
 class Player;
 class Square;
@@ -35,6 +37,13 @@ protected:
 	int money;
 	int SpeedMult;
 public:
+	void on_message(websocketpp::connection_hdl hdl, client::message_ptr msg);
+	std::thread ws_thread;
+	std::string uri = "ws://localhost:" + std::to_string(9029);
+	WebSocketClient ws_client;
+	std::mutex mtx;
+
+
 	clock_t ct1,ct2;
 	static bool DebugMode;
 	static const std::vector<Engine::Point> directions;

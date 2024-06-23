@@ -3,6 +3,7 @@
 #include <allegro5/base.h>
 #include <list>
 #include <string>
+#include <atomic>
 
 #include "Engine/Sprite.hpp"
 #include "Engine/Group.hpp"
@@ -15,6 +16,7 @@ protected:
     PlayScene* getPlayScene();
 public:
     std::vector<Square*> Squares;
+    // std::atomic<char> cube_type;
     char cube_type;
     char cube[10][10];
     int rotation;

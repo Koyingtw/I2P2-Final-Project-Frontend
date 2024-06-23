@@ -41,7 +41,7 @@ void WinScene::Initialize() {
 	AddNewObject(new Engine::Label("You Win!", "pirulen.ttf", 48, halfW, 50, 255, 255, 255, 255, 0.5, 0.5));
 	std::cerr << pass_time << '\n';
 	string time_out = "Use Time: "+to_string(pass_time/60)+"m,"+to_string(pass_time%60)+"s";
-	AddNewObject(new Engine::Label(time_out, "pirulen.ttf", 48, halfW + 300, 100, 200, 255, 255, 255, 0.5, 0.5));
+	// AddNewObject(new Engine::Label(time_out, "pirulen.ttf", 48, halfW + 300, 100, 200, 255, 255, 255, 0.5, 0.5));
 	Engine::ImageButton* btn;
 	btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW -200 - 250, halfH * 7 / 4 - 50, 400, 100);
 	btn->SetOnClickCallback(std::bind(&WinScene::BackOnClick, this, 2));

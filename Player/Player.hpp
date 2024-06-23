@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <atomic>
 
 #include "Engine/Point.hpp"
 #include "Engine/Group.hpp"
@@ -23,14 +24,14 @@ protected:
 public:
     std::vector<Cube*> Cubes;
     char board[20][25];
-    int score;
+    std::atomic<int> score;
     char hold;
     Cube* cube_hold;
     char next[4];
     Cube* cube_next[4];
     char block;
     int block_dis;
-    char head_board[20][5];
+    std::atomic<char> head_board[20][5];
     Player(int number);
     std::string cube_types;
     void Update(float deltaTime) override;

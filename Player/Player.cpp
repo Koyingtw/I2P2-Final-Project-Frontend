@@ -46,14 +46,20 @@ Player::Player(int number) :
             }
         }
         cube_types = "IJLOSTZ";
-        hold = cube_types[rnd()%7];
-        next[0] = cube_types[rnd()%7];
-        next[1] = cube_types[rnd()%7];
-        next[2] = cube_types[rnd()%7];
-        next[3] = cube_types[rnd()%7];
+        if(number==1)
+            hold = cube_types[rnd()%7];
+        else
+            hold = 'X';
+        for (int i = 0; i < 4; i++) {
+            std::mutex mtx;
+            std::lock_guard<std::mutex> lock(mtx);
+            next[i] = cube_types[rnd()%7];
+        }
+
         Cubes.clear();
         block = cube_types[rnd()%7];
         block_dis = 3;
+
         score = 0;
         preview = new Cube(block, 48763, 48763);
 }
@@ -107,7 +113,9 @@ void Player::Update(float deltaTime) {
     // }
     
     /*preview*/
+    // if(player_number == 1) preview->Update(deltaTime);
     preview->Update(deltaTime);
+    if(player_number == 2) return;
     while(Cnt_Head_Square(block_dis)<4){
         for(int i=-2;i<=2;i++){
             if(Cnt_Head_Square(block_dis+i) == 4){
@@ -173,34 +181,38 @@ bool Player::Check_Row(int x,int y){
 }
 
 void Player::Move_Down(){
-    for(int j=-2;j<20;j++){
-        int cnt = 0;
-        for(int k=0;k<4;k++){
-            for(int i=0;i<10;i++){
-                if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'&&Check_Row(i,j+k)){
-                    cnt++;
-                }
-            }
-        }
-        if(cnt==4){
+    if(player_number == 1){
+        for(int j=-2;j<20;j++){
+            int cnt = 0;
             for(int k=0;k<4;k++){
                 for(int i=0;i<10;i++){
-                    if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'){
-                        board[i][j+k] = head_board[i][k];
+                    if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'&&Check_Row(i,j+k)){
+                        cnt++;
                     }
                 }
             }
-            preview->cube_type = next[0];
-            for(int i=0;i<2;i++) next[i] = next[i+1];
-            next[2] = cube_types[rnd()%7];
-            return;
+            if(cnt==4){
+                for(int k=0;k<4;k++){
+                    for(int i=0;i<10;i++){
+                        if(j+k>=0&&j+k<20&&board[i][j+k]=='X' && head_board[i][k]!='X'){
+                            board[i][j+k] = head_board[i][k];
+                        }
+                    }
+                }
+                preview->cube_type = next[0];
+                for(int i=0;i<2;i++) next[i] = next[i+1];
+                next[2] = cube_types[rnd()%7];
+                return;
+            }
         }
+        PlayScene* scene = getPlayScene();
+        scene->game_over = 1;
     }
-    PlayScene* scene = getPlayScene();
-    scene->game_over = 1;
 }
 
 void Player::Eliminate() {
+    PlayScene* scene = getPlayScene();
+    if(scene->MapId != 1) return;
     int lines = 0;
     for(int j=20-1;j>=0;j--){
         int cnt = 0;
