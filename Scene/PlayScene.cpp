@@ -55,14 +55,13 @@ void PlayScene::Initialize() {
 	Player_Score = 0;
 	game_over = 0;
 	// ------------
-	player_1 = new Player(1);
-	player_2 = new Player(2);
 	// player_1->Initialize();
 	// player_2->Initialize();
 	// ------------
 	// Add groups from bottom to top.
 	AddNewObject(SquareGroup = new Group());
-	AddNewObject(CubeGroups = new Group());
+	AddNewObject(CubeGroups1 = new Group());
+	AddNewObject(CubeGroups2 = new Group());
 
 	AddNewObject(TileMapGroup = new Group());
 	AddNewObject(GroundEffectGroup = new Group());
@@ -70,6 +69,8 @@ void PlayScene::Initialize() {
 	AddNewObject(EffectGroup = new Group());
 	// Should support buttons.
 	AddNewControlObject(UIGroup = new Group());
+	player_1 = new Player(1);
+	player_2 = new Player(2);
 	player_1->Initialize();
 	player_2->Initialize();
 	Squares_info.clear();

@@ -16,7 +16,7 @@ protected:
 public:
     std::vector<Square*> Squares;
     char cube_type;
-    char cube[4][4];
+    char cube[10][10];
     int rotation;
     Cube(char cube_type,float x, float y);
     int pos_x,pos_y;
