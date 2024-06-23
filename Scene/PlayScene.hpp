@@ -53,7 +53,8 @@ public:
 	// Map tiles.
 	Player* player_1;
 	Player* player_2;
-	Group* CubeGroups;
+	Group* CubeGroups1;
+	Group* CubeGroups2;
 	Group* TileMapGroup;
 	Group* GroundEffectGroup;
 	Group* DebugIndicatorGroup;

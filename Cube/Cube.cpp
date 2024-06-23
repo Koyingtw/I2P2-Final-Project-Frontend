@@ -173,7 +173,7 @@ void Cube::Update_Cube(){
 void Cube::Clear_Cube(){
 	PlayScene* scene = getPlayScene();
 	for(auto i:Squares){
-        scene->CubeGroups->RemoveObject(i->GetObjectIterator());
+        scene->CubeGroups1->RemoveObject(i->GetObjectIterator());
     }
     Squares.clear();
 }
@@ -187,31 +187,31 @@ void Cube::Draw_Cube(){
 			float nx = pos_x + 30 * i ,ny = pos_y - 30* j;
 			switch (cube[i][j]){
 				case 'S':
-					scene -> CubeGroups->AddNewObject(square = new S_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new S_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'Z':
-					scene -> CubeGroups->AddNewObject(square = new Z_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new Z_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'J':
-					scene -> CubeGroups->AddNewObject(square = new J_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new J_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'L':
-					scene -> CubeGroups->AddNewObject(square = new L_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new L_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'O':
-					scene -> CubeGroups->AddNewObject(square = new O_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new O_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'I':
-					scene -> CubeGroups->AddNewObject(square = new I_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new I_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				case 'T':
-					scene -> CubeGroups->AddNewObject(square = new T_Square(nx, ny));
+					scene -> CubeGroups1->AddNewObject(square = new T_Square(nx, ny));
 					Squares.push_back(square);
 					break;
 				default:

@@ -61,7 +61,7 @@ Player::Player(int number) :
 void Player::Clear_Cube(){
 	PlayScene* scene = getPlayScene();
 	for(auto i:Cubes){
-        scene->CubeGroups->RemoveObject(i->GetObjectIterator());
+        scene->CubeGroups2->RemoveObject(i->GetObjectIterator());
     }
     Cubes.clear();
 }
@@ -74,11 +74,11 @@ void Player::Initialize(){
     int halfH = h / 2 + 75;
     
     /*hold*/
-	scene -> CubeGroups -> AddNewObject(cube_hold = new Cube(hold, halfW-712 + 32 + 800 * (player_number - 1) , halfH-302 + 120));
+	scene -> CubeGroups2 -> AddNewObject(cube_hold = new Cube(hold, halfW-712 + 32 + 800 * (player_number - 1) , halfH-302 + 120));
 
     /*next*/
     for(int i=0;i<3;i++){
-        scene -> CubeGroups -> AddNewObject(cube_next[i] = new Cube(next[i], halfW-712 + 505 + 800 * (player_number - 1) , halfH-302 + 120 + 120 * i));
+        scene -> CubeGroups2 -> AddNewObject(cube_next[i] = new Cube(next[i], halfW-712 + 505 + 800 * (player_number - 1) , halfH-302 + 120 + 120 * i));
     }
 }
 
@@ -173,7 +173,6 @@ bool Player::Check_Row(int x,int y){
 }
 
 void Player::Move_Down(){
-    // std::cerr << 1111 << '\n';
     for(int j=-2;j<20;j++){
         int cnt = 0;
         for(int k=0;k<4;k++){
